@@ -1,4 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style type="text/css">
+    .embeddedServiceHelpButton .helpButton .uiButton {
+      background-color: #65A300;
+      font-family: "Arial", sans-serif;
+    }
+    .embeddedServiceHelpButton .helpButton .uiButton:focus {
+      outline: 1px solid #005290;
+    }
 
+
+
+    .box {
+        width: 100%;
+        height: 1000px;
+        background-color: #ccc;
+        float: left;
+
+    }
+  </style>
+  
 <script>
     function checkAvailability() {
 
@@ -40,3 +66,161 @@ function CheckHourDateChat() {
 }
 
 </script> 
+
+<body>
+    <div class="box">Ola</div>
+    <script
+    type="text/javascript"
+    src="https://service.force.com/embeddedservice/5.0/esw.min.js"
+  ></script>
+  <script type="text/javascript">
+    window.nuvemTagsTest = "20";
+  </script>
+  <script type="text/javascript">
+    var initESW = function (gslbBaseURL) {
+      embedded_svc.settings.displayHelpButton = true; //Ou falso
+      embedded_svc.settings.language = "pt_BR"; //Por exemplo, insira "pt" ou "pt-BR"
+  
+      embedded_svc.settings.defaultMinimizedText = 'Chat'; //(Assume como padrão o Chat com um especialista)
+        embedded_svc.settings.disabledMinimizedText = 'Chat off-line'; //(Assume como padrão Agente off-line)
+        //embedded_svc.settings.offlineSupportMinimizedText = 'teste de 16 caracteres'; //(Padronizado para Entre em contato conosco)
+  
+      //embedded_svc.settings.loadingText = ''; //(Assume como padrão Carregando)
+      //embedded_svc.settings.storageDomain = 'yourdomain.com'; //(Define o domínio de sua implantação para que seus visitantes possam navegar em subdomínios durante uma sessão de chat)
+  
+      // Configurações para Chat
+      //embedded_svc.settings.directToButtonRouting = function(prechatFormData) {
+      // Dynamically changes the button ID based on what the visitor enters in the pre-chat form.
+      // Returns a valid button ID.
+      //};
+      //embedded_svc.settings.prepopulatedPrechatFields = {}; //Define o preenchimento automático de campos de formulário de pré-chat
+      //embedded_svc.settings.fallbackRouting = []; //Uma matriz de IDs de botão, IDs de usuário ou userId_buttonId
+       
+  
+      embedded_svc.settings.extraPrechatInfo = [
+        //Mapeia o objeto caso e campo TagsCloud__c para inserir a nuvem de tags
+        {
+          entityName: "Case",
+          showOnCreate: true,
+          entityFieldMaps: [
+            {
+              isExactMatch: false,
+              fieldName: "TagsCloud__c",
+              doCreate: true,
+              doFind: false,
+              label: "TagsCloud",
+            },
+              {
+                  isExactMatch: false,
+                  fieldName: "Origin",
+                  doCreate: true,
+                  doFind: false,
+                  label: "Origin",
+              },
+              {
+                  isExactMatch: false,
+                  fieldName: "Status",
+                  doCreate: true,
+                  doFind: false,
+                  label: "Status",
+              },
+          ],
+        },
+      ];
+  
+      var nuvemTags = window.nuvemTagsTest; //'teste nuvem tags case';
+      embedded_svc.settings.extraPrechatFormDetails = [
+        //Script para levar dados para o chat transcript
+        {
+          label: "Text",
+          transcriptFields: ["TagsCloud__c"],
+          value: "testes de tags, abcde",
+        },
+  
+        //Script para levar dados para o objeto case
+        {
+          label: "TagsCloud",
+          value: nuvemTags,
+          transcriptFields: [],
+          displayToAgent: true,
+        },
+          {
+              label: "Origin",
+              value: "Chat",
+              transcriptFields: [],
+              displayToAgent: true,
+          },
+          {
+              label: "Status",
+              value: "Aberto",
+              transcriptFields: [],
+              displayToAgent: true,
+          },
+      ];
+  
+      embedded_svc.settings.enabledFeatures = ["LiveAgent"];
+         embedded_svc.settings.entryFeature = "LiveAgent";
+      //////DEVSERVICE/////
+         embedded_svc.init(
+            'https://stoneco--pagarmedev.sandbox.my.salesforce.com',
+            'https://stoneco--pagarmedev.sandbox.my.salesforce-sites.com/liveAgentSetupFlow',
+            gslbBaseURL,
+            '00DDL00000CU0df',
+            'Atendimento_Chat_CS',
+            {
+                baseLiveAgentContentURL: 'https://c.la1-c1cs-ia6.salesforceliveagent.com/content',
+                deploymentId: '572Dn000000Z6AP',
+                buttonId: '573Dn000000Z68U',
+                baseLiveAgentURL: 'https://d.la1-c1cs-ia6.salesforceliveagent.com/chat',
+                eswLiveAgentDevName: 'Atendimento_Chat_CS',
+                isOfflineSupportEnabled: false
+            }
+        );
+    };
+  
+    if (!window.embedded_svc) {
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://stoneco--pagarmedev.sandbox.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+        s.onload = function() {
+            initESW(null);
+        };
+        document.body.appendChild(s);
+    } else {
+        initESW('https://service.force.com');
+    }
+  
+    ///////PROD/////
+        /*
+    
+    embedded_svc.init(
+                'https://stoneco.my.salesforce.com',
+                'https://stoneco.my.salesforce-sites.com/liveAgentSetupFlow',
+                gslbBaseURL,
+                '00DDn000000IVKf',
+                'Atendimento_Chat_CS',
+                {
+                    baseLiveAgentContentURL: 'https://c.la1-c1-ia6.salesforceliveagent.com/content',
+                    deploymentId: '572Dn000000Z6AP',
+                    buttonId: '573Dn000000Z68U',
+                    baseLiveAgentURL: 'https://d.la1-c1-ia6.salesforceliveagent.com/chat',
+                    eswLiveAgentDevName: 'Atendimento_Chat_CS',
+                    isOfflineSupportEnabled: false
+                }
+            );
+        };
+    
+    if (!window.embedded_svc) {
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://stoneco.my.salesforce.com/embeddedservice/5.0/esw.min.js');
+        s.onload = function() {
+            initESW(null);
+        };
+        document.body.appendChild(s);
+    } else {
+        initESW('https://service.force.com');
+    }
+    */
+    
+  </script>
+</body>
+</html>
